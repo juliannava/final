@@ -10,10 +10,12 @@ if (!is_logged_in()) {
     exit;
 }
 
+//HERE IS LAB18
+
 $host = 'localhost'; 
 $dbname = 'books'; 
-$user = 'mark'; 
-$pass = 'mark';
+$user = 'julian'; 
+$pass = 'julian';
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$dbname;charset=$charset";
