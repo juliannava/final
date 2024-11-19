@@ -35,23 +35,23 @@ try {
 $search_results = null;
 if (isset($_GET['search']) && !empty($_GET['search'])) {
     $search_term = '%' . $_GET['search'] . '%';
-    $search_sql = 'SELECT id, author, title, publisher FROM books WHERE title LIKE :search';
+    $search_sql = 'SELECT id, player, position, club FROM books WHERE player LIKE :player';
     $search_stmt = $pdo->prepare($search_sql);
-    $search_stmt->execute(['search' => $search_term]);
+    $search_stmt->execute(['player' => $search_term]);
     $search_results = $search_stmt->fetchAll();
 }
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['author']) && isset($_POST['title']) && isset($_POST['publisher'])) {
+    if (isset($_POST['player']) && isset($_POST['position']) && isset($_POST['club'])) {
         // Insert new entry
-        $author = htmlspecialchars($_POST['author']);
-        $title = htmlspecialchars($_POST['title']);
-        $publisher = htmlspecialchars($_POST['publisher']);
+        $player = htmlspecialchars($_POST['player']);
+        $position = htmlspecialchars($_POST['position']);
+        $club = htmlspecialchars($_POST['club']);
         
-        $insert_sql = 'INSERT INTO books (author, title, publisher) VALUES (:author, :title, :publisher)';
+        $insert_sql = 'INSERT INTO books (player, position, club) VALUES (:player, :position, :club)';
         $stmt_insert = $pdo->prepare($insert_sql);
-        $stmt_insert->execute(['author' => $author, 'title' => $title, 'publisher' => $publisher]);
+        $stmt_insert->execute(['player' => $player, 'position' => $position, 'club' => $club]);
     } elseif (isset($_POST['delete_id'])) {
         // Delete an entry
         $delete_id = (int) $_POST['delete_id'];
@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 // Get all books for main table
-$sql = 'SELECT id, author, title, publisher FROM books';
+$sql = 'SELECT id, player, position, club FROM books';
 $stmt = $pdo->query($sql);
 ?>
 
@@ -71,20 +71,19 @@ $stmt = $pdo->query($sql);
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Betty's Book Banning and Bridge Building</title>
+    <title>Players Banning</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <!-- Hero Section -->
     <div class="hero-section">
-        <h1 class="hero-title">Betty's Book Banning and Bridge Building</h1>
-        <p class="hero-subtitle">"Because nothing brings a community together like collectively deciding what others shouldn't read!"</p>
+        <h1 class="hero-title">Players Banning</h1>
         
         <!-- Search moved to hero section -->
         <div class="hero-search">
-            <h2>Search for a Book to Ban</h2>
+            <h2>Search for a player to Ban</h2>
             <form action="" method="GET" class="search-form">
-                <label for="search">Search by Title:</label>
+                <label for="search">Search by player:</label>
                 <input type="text" id="search" name="search" required>
                 <input type="submit" value="Search">
             </form>
@@ -97,9 +96,9 @@ $stmt = $pdo->query($sql);
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Author</th>
-                                    <th>Title</th>
-                                    <th>Publisher</th>
+                                    <th>Player</th>
+                                    <th>Position</th>
+                                    <th>Club</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -107,9 +106,9 @@ $stmt = $pdo->query($sql);
                                 <?php foreach ($search_results as $row): ?>
                                 <tr>
                                     <td><?php echo htmlspecialchars($row['id']); ?></td>
-                                    <td><?php echo htmlspecialchars($row['author']); ?></td>
-                                    <td><?php echo htmlspecialchars($row['title']); ?></td>
-                                    <td><?php echo htmlspecialchars($row['publisher']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['player']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['position']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['club']); ?></td>
                                     <td>
                                         <form action="index5.php" method="post" style="display:inline;">
                                             <input type="hidden" name="delete_id" value="<?php echo $row['id']; ?>">
@@ -121,7 +120,7 @@ $stmt = $pdo->query($sql);
                             </tbody>
                         </table>
                     <?php else: ?>
-                        <p>No books found matching your search.</p>
+                        <p>No players found matching your search.</p>
                     <?php endif; ?>
                 </div>
             <?php endif; ?>
@@ -135,9 +134,9 @@ $stmt = $pdo->query($sql);
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Author</th>
-                    <th>Title</th>
-                    <th>Publisher</th>
+                    <th>Player</th>
+                    <th>Position</th>
+                    <th>Club</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -145,9 +144,9 @@ $stmt = $pdo->query($sql);
                 <?php while ($row = $stmt->fetch()): ?>
                 <tr>
                     <td><?php echo htmlspecialchars($row['id']); ?></td>
-                    <td><?php echo htmlspecialchars($row['author']); ?></td>
-                    <td><?php echo htmlspecialchars($row['title']); ?></td>
-                    <td><?php echo htmlspecialchars($row['publisher']); ?></td>
+                    <td><?php echo htmlspecialchars($row['player']); ?></td>
+                    <td><?php echo htmlspecialchars($row['position']); ?></td>
+                    <td><?php echo htmlspecialchars($row['club']); ?></td>
                     <td>
                         <form action="index5.php" method="post" style="display:inline;">
                             <input type="hidden" name="delete_id" value="<?php echo $row['id']; ?>">
@@ -162,18 +161,18 @@ $stmt = $pdo->query($sql);
 
     <!-- Form section with container -->
     <div class="form-container">
-        <h2>Condemn a Book Today</h2>
+        <h2>Condemn a player Today</h2>
         <form action="index5.php" method="post">
-            <label for="author">Author:</label>
-            <input type="text" id="author" name="author" required>
+            <label for="player">Player:</label>
+            <input type="text" id="player" name="player" required>
             <br><br>
-            <label for="title">Title:</label>
-            <input type="text" id="title" name="title" required>
+            <label for="position">Position:</label>
+            <input type="text" id="position" name="position" required>
             <br><br>
-            <label for="publisher">Publisher:</label>
-            <input type="text" id="publisher" name="publisher" required>
+            <label for="club">Club:</label>
+            <input type="text" id="club" name="club" required>
             <br><br>
-            <input type="submit" value="Condemn Book">
+            <input type="submit" value="Condemn player">
         </form>
     </div>
 </body>
